@@ -22,6 +22,30 @@ class App extends React.Component{
   componentDidMount(){
     // This is the method that react calls after the component has been attached to the DOM, as a real element
     // This is the first React method where it is safe to call this.setState
+    this._makeAjaxRequest();
+  }
+
+  render () {
+    return (
+      <div className="App">
+        <header className="App-header">    
+        {this.state.name}
+        <button onClick= {this._getNextCharcter}>Click Me For Next Character!</button>
+        </header>
+      </div>
+    );
+  };
+
+  _getNextCharcter= () =>{
+    this.setState({
+      currentId: this.state.currentId + 1
+    }, ()=>{
+      console.log(`New currentId is ${this.state.currentId}`);
+      this._makeAjaxRequest();
+    });
+  }
+
+  _makeAjaxRequest= () =>{
     axios.get(urlForId(this.state.currentId))
       .then(response =>{
         console.log(response.data.name);
@@ -29,17 +53,9 @@ class App extends React.Component{
           name: response.data.name
         })
       })
-  }
-
-  render () {
-    return (
-      <div className="App">
-        <button></button>
-        <header className="App-header">    
-        {this.state.name}
-        </header>
-      </div>
-    );
+      .catch(err =>{
+        this._getNextCharcter();
+      })
   };
 }
 
